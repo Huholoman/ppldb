@@ -1,41 +1,35 @@
 package org.epptec.ppldb.infrastructure.cli.runner.commands;
 
-import org.epptec.ppldb.domain.people.Person;
-import org.epptec.ppldb.domain.people.PersonRepository;
 import org.epptec.ppldb.domain.people.exceptions.InvalidIdentificationNumberException;
 import org.epptec.ppldb.domain.people.exceptions.PersonNotFoundException;
-import org.epptec.ppldb.domain.people.services.IdentificationNumberToAgeCalculator;
-import org.epptec.ppldb.domain.people.services.IdentificationNumberToInstantConverter;
 import org.epptec.ppldb.infrastructure.cli.runner.commands.utils.IdentificationNumberScanner;
+import org.epptec.ppldb.queries.PersonDetailQueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FindPersonCommand implements Command {
 
-    private final PersonRepository personRepository;
     private final IdentificationNumberScanner identificationNumberScanner;
-    IdentificationNumberToInstantConverter identificationNumberToInstantConverter;
-    private final IdentificationNumberToAgeCalculator identificationNumberToAgeCalculator;
+    private final PersonDetailQueryHandler personDetailQueryHandler;
 
     public FindPersonCommand(
-        @Autowired PersonRepository personRepository,
-        @Autowired IdentificationNumberScanner identificationNumberScanner,
-        @Autowired IdentificationNumberToInstantConverter identificationNumberToInstantConverter,
-        @Autowired IdentificationNumberToAgeCalculator identificationNumberToAgeCalculator
+        @Autowired PersonDetailQueryHandler personDetailQueryHandler,
+        @Autowired IdentificationNumberScanner identificationNumberScanner
     ) {
-        this.personRepository = personRepository;
+        this.personDetailQueryHandler = personDetailQueryHandler;
         this.identificationNumberScanner = identificationNumberScanner;
-        this.identificationNumberToAgeCalculator = identificationNumberToAgeCalculator;
-        this.identificationNumberToInstantConverter = identificationNumberToInstantConverter;
     }
 
     @Override
     public void run() {
         try {
             var identificationNumber = identificationNumberScanner.scan();
-            var person = personRepository.get(identificationNumber);
-            printPersonInfo(person);
+            var personDetail = personDetailQueryHandler.find(new PersonDetailQueryHandler.Query(
+                identificationNumber
+            ));
+
+            printPersonInfo(personDetail);
         } catch(InvalidIdentificationNumberException e) {
             System.out.println(e.getMessage());
         } catch (PersonNotFoundException e) {
@@ -43,13 +37,11 @@ public class FindPersonCommand implements Command {
         }
     }
 
-    private void printPersonInfo(Person person) {
-        System.out.println("Identification number: " + person.getIdentificationNumber());
-        System.out.println("First name: " + person.getFirstName());
-        System.out.println("Last name: " + person.getLastName());
-
-        var dateOfBirthInstant = identificationNumberToInstantConverter.toInstant(person.getIdentificationNumber());
-        System.out.println("Age: " + identificationNumberToAgeCalculator.calculateAge(dateOfBirthInstant));
+    private void printPersonInfo(PersonDetailQueryHandler.Response personDetail) {
+        System.out.println("Identification number: " + personDetail.identificationNumber().toString());
+        System.out.println("First name: " + personDetail.firstName().toString());
+        System.out.println("Last name: " + personDetail.lastName().toString());
+        System.out.println("Age: " + personDetail.age());
     }
 
     @Override
