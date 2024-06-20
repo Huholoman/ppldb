@@ -4,6 +4,7 @@ import org.epptec.ppldb.domain.people.Person;
 import org.epptec.ppldb.domain.people.PersonRepository;
 import org.epptec.ppldb.domain.people.exceptions.EmptyNameException;
 import org.epptec.ppldb.domain.people.exceptions.InvalidIdentificationNumberException;
+import org.epptec.ppldb.domain.people.exceptions.PersonExistsException;
 import org.epptec.ppldb.infrastructure.cli.runner.commands.utils.IdentificationNumberScanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,11 @@ public class CreatePersonCommand implements Command {
             var person = tryScanPerson();
             personRepository.save(person);
             System.out.println("Person created.");
-        } catch (InvalidIdentificationNumberException e) {
+        } catch (InvalidIdentificationNumberException |
+                 PersonExistsException |
+                 EmptyNameException e
+        ) {
             System.out.println(e.getMessage());
-        } catch (EmptyNameException e) {
-            System.out.println();
         }
     }
 

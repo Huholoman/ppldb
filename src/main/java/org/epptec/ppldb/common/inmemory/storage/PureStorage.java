@@ -1,6 +1,7 @@
 package org.epptec.ppldb.common.inmemory.storage;
 
 import org.epptec.ppldb.common.inmemory.storage.exceptions.NodeNotFoundException;
+import org.epptec.ppldb.common.inmemory.storage.exceptions.ValueExistsException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ public class PureStorage<Identifier, Key, Value> implements Storage<Identifier, 
         return root.getValue(identifierToKeyList.apply(identifier));
     }
 
-    public void addValue(Identifier identifier, Value value) {
+    public void addValue(Identifier identifier, Value value) throws ValueExistsException {
         root.addValue(identifierToKeyList.apply(identifier), value);
     }
 
@@ -54,8 +55,11 @@ public class PureStorage<Identifier, Key, Value> implements Storage<Identifier, 
             return children.get(key).getValue(keys.subList(1, keys.size()));
         }
 
-        public void addValue(List<Key> keys, Value value) {
+        public void addValue(List<Key> keys, Value value) throws ValueExistsException {
             if (keys.isEmpty()) {
+                if (this.value.isPresent()) {
+                    throw new ValueExistsException();
+                }
                 this.value = Optional.of(value);
                 return;
             }
