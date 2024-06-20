@@ -47,7 +47,7 @@ public class PureStorage<Identifier, Key, Value> implements Storage<Identifier, 
                 return value.get();
             }
 
-            var key = keys.getFirst();
+            var key = keys.get(0);
             if (!children.containsKey(key)) {
                 throw new NodeNotFoundException();
             }
@@ -64,7 +64,7 @@ public class PureStorage<Identifier, Key, Value> implements Storage<Identifier, 
                 return;
             }
 
-            var key = keys.getFirst();
+            var key = keys.get(0);
             if (!children.containsKey(key)) {
                 children.put(key, new Node<>());
             }
@@ -77,7 +77,7 @@ public class PureStorage<Identifier, Key, Value> implements Storage<Identifier, 
                 throw new IllegalArgumentException("Keys cannot be empty");
             }
 
-            var key = keys.getFirst();
+            var key = keys.get(0);
             if (keys.isEmpty()) {
                 children.get(key).removeValue(keys.subList(1, keys.size()));
                 return;
