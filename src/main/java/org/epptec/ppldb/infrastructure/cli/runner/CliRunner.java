@@ -2,18 +2,26 @@ package org.epptec.ppldb.infrastructure.cli.runner;
 
 import org.epptec.ppldb.infrastructure.cli.runner.commands.Command;
 import org.epptec.ppldb.infrastructure.cli.runner.commands.QuitCommand;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Scanner;
 
+@Service
 public class CliRunner {
 
     private final Scanner scanner;
     private final List<Command> commands;
 
-    public CliRunner(Scanner scanner, List<Command> commands) {
+    public CliRunner(
+        @Autowired Scanner scanner,
+        @Autowired List<Command> commands
+    ) {
         this.scanner = scanner;
-        this.commands = commands;
+        this.commands = commands.stream()
+            .sorted((o1, o2) -> Integer.compare(o2.getPriority(), o1.getPriority()))
+            .toList();
     }
 
     public void run() {

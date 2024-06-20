@@ -7,8 +7,10 @@ import org.epptec.ppldb.domain.people.exceptions.PersonNotFoundException;
 import org.epptec.ppldb.domain.people.services.IdentificationNumberToAgeCalculator;
 import org.epptec.ppldb.domain.people.services.IdentificationNumberToInstantConverter;
 import org.epptec.ppldb.infrastructure.cli.runner.commands.utils.IdentificationNumberScanner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class FindPersonCommand implements Command {
 
     private final PersonRepository personRepository;
@@ -17,10 +19,10 @@ public class FindPersonCommand implements Command {
     private final IdentificationNumberToAgeCalculator identificationNumberToAgeCalculator;
 
     public FindPersonCommand(
-        PersonRepository personRepository,
-        IdentificationNumberScanner identificationNumberScanner,
-        IdentificationNumberToInstantConverter identificationNumberToInstantConverter,
-        IdentificationNumberToAgeCalculator identificationNumberToAgeCalculator
+        @Autowired PersonRepository personRepository,
+        @Autowired IdentificationNumberScanner identificationNumberScanner,
+        @Autowired IdentificationNumberToInstantConverter identificationNumberToInstantConverter,
+        @Autowired IdentificationNumberToAgeCalculator identificationNumberToAgeCalculator
     ) {
         this.personRepository = personRepository;
         this.identificationNumberScanner = identificationNumberScanner;
@@ -53,5 +55,10 @@ public class FindPersonCommand implements Command {
     @Override
     public String getName() {
         return "Find Person";
+    }
+
+    @Override
+    public int getPriority() {
+        return 1;
     }
 }

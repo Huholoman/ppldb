@@ -1,7 +1,10 @@
 package org.epptec.ppldb.domain.people.services;
 
+import org.springframework.stereotype.Service;
+
 import java.time.*;
 
+@Service
 public class IdentificationNumberToAgeCalculator {
 
     private final Clock clock;

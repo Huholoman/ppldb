@@ -5,7 +5,9 @@ import org.epptec.ppldb.common.inmemory.storage.exceptions.NodeNotFoundException
 import org.epptec.ppldb.domain.people.Person;
 import org.epptec.ppldb.domain.people.PersonRepository;
 import org.epptec.ppldb.domain.people.exceptions.PersonNotFoundException;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class InmemoryPersonRepository implements PersonRepository {
     private final Storage<Person.IdentificationNumber, Person> storage;
 
