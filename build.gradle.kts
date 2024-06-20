@@ -1,9 +1,12 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.epptec.ppldb"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -28,3 +31,25 @@ java {
         options.compilerArgs.add("-parameters")
     }
 }
+
+val shadowJarTaskProvider = tasks.named<ShadowJar>("shadowJar")
+
+val buildCli by tasks.creating(ShadowJar::class) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveBaseName.set("cli")
+    archiveVersion.set(project.version.toString())
+
+    manifest.attributes["Main-Class"] = "org.epptec.ppldb.CliMain"
+    from(zipTree(shadowJarTaskProvider.get().archiveFile))
+}
+
+
+val buildHttp by tasks.creating(ShadowJar::class) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveBaseName.set("http")
+    archiveVersion.set(project.version.toString())
+
+    manifest.attributes["Main-Class"] = "org.epptec.ppldb.HttpMain"
+    from(zipTree(shadowJarTaskProvider.get().archiveFile))
+}
+
