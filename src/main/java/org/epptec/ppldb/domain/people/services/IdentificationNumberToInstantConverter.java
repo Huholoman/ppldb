@@ -1,10 +1,12 @@
 package org.epptec.ppldb.domain.people.services;
 
 import org.epptec.ppldb.domain.people.Person;
+import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.List;
 
+@Service
 public class IdentificationNumberToInstantConverter {
     public Instant toInstant(Person.IdentificationNumber identificationNumber) {
         var parts = identificationNumber.toString().chars()

@@ -4,15 +4,18 @@ import org.epptec.ppldb.domain.people.PersonRepository;
 import org.epptec.ppldb.domain.people.exceptions.InvalidIdentificationNumberException;
 import org.epptec.ppldb.domain.people.exceptions.PersonNotFoundException;
 import org.epptec.ppldb.infrastructure.cli.runner.commands.utils.IdentificationNumberScanner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RemovePersonCommand implements Command {
 
     private final PersonRepository personRepository;
     private final IdentificationNumberScanner identificationNumberScanner;
 
     public RemovePersonCommand(
-        PersonRepository personRepository,
-        IdentificationNumberScanner identificationNumberScanner
+        @Autowired PersonRepository personRepository,
+        @Autowired IdentificationNumberScanner identificationNumberScanner
     ) {
         this.personRepository = personRepository;
         this.identificationNumberScanner = identificationNumberScanner;
@@ -33,5 +36,10 @@ public class RemovePersonCommand implements Command {
     @Override
     public String getName() {
         return "Remove Person";
+    }
+
+    @Override
+    public int getPriority() {
+        return 1;
     }
 }

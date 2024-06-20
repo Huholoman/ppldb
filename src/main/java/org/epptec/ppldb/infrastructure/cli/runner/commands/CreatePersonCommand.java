@@ -5,9 +5,12 @@ import org.epptec.ppldb.domain.people.PersonRepository;
 import org.epptec.ppldb.domain.people.exceptions.EmptyNameException;
 import org.epptec.ppldb.domain.people.exceptions.InvalidIdentificationNumberException;
 import org.epptec.ppldb.infrastructure.cli.runner.commands.utils.IdentificationNumberScanner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Scanner;
 
+@Service
 public class CreatePersonCommand implements Command {
 
     private final Scanner scanner;
@@ -15,9 +18,9 @@ public class CreatePersonCommand implements Command {
     private final IdentificationNumberScanner identificationNumberScanner;
 
     public CreatePersonCommand(
-        Scanner scanner,
-        PersonRepository personRepository,
-        IdentificationNumberScanner identificationNumberScanner
+        @Autowired Scanner scanner,
+        @Autowired PersonRepository personRepository,
+        @Autowired IdentificationNumberScanner identificationNumberScanner
     ) {
         this.scanner = scanner;
         this.personRepository = personRepository;
@@ -55,5 +58,10 @@ public class CreatePersonCommand implements Command {
     @Override
     public String getName() {
         return "Create Person";
+    }
+
+    @Override
+    public int getPriority() {
+        return 1;
     }
 }
