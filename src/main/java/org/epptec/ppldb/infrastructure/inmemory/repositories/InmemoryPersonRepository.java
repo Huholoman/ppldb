@@ -2,8 +2,10 @@ package org.epptec.ppldb.infrastructure.inmemory.repositories;
 
 import org.epptec.ppldb.common.inmemory.storage.Storage;
 import org.epptec.ppldb.common.inmemory.storage.exceptions.NodeNotFoundException;
+import org.epptec.ppldb.common.inmemory.storage.exceptions.ValueExistsException;
 import org.epptec.ppldb.domain.people.Person;
 import org.epptec.ppldb.domain.people.PersonRepository;
+import org.epptec.ppldb.domain.people.exceptions.PersonExistsException;
 import org.epptec.ppldb.domain.people.exceptions.PersonNotFoundException;
 import org.springframework.stereotype.Repository;
 
@@ -25,8 +27,12 @@ public class InmemoryPersonRepository implements PersonRepository {
     }
 
     @Override
-    public void save(Person person) {
-        storage.addValue(person.getIdentificationNumber(), person);
+    public void save(Person person) throws PersonExistsException {
+        try {
+            storage.addValue(person.getIdentificationNumber(), person);
+        } catch (ValueExistsException e) {
+            throw new PersonExistsException(person.getIdentificationNumber());
+        }
     }
 
     @Override
